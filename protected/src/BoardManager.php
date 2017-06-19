@@ -1,16 +1,19 @@
 <?php
 namespace src;
 
+use SplObserver;
 use src\figures\Figure;
 
-class BoardManager
+class BoardManager implements \SplSubject
 {
     private $_board;
     private $_figures = [];
+    private $_observers;
 
     public function __construct(Board $board)
     {
         $this->_board = $board;
+        $this->_observers = new \SplObjectStorage();
     }
 
     public function addFigure(Figure $figure, Coordinate $coordinates)
@@ -20,6 +23,7 @@ class BoardManager
             'coordinates' => $coordinates
         ];
         $this->_figures[] = $placedFigure;
+        $this->notify();
 
         return $placedFigure;
     }
@@ -36,5 +40,22 @@ class BoardManager
     public function getFigures()
     {
         return $this->_figures;
+    }
+
+    public function attach(SplObserver $observer)
+    {
+        $this->_observers->attach($observer);
+    }
+
+    public function detach(SplObserver $observer)
+    {
+        $this->_observers->detach($observer);
+    }
+
+    public function notify()
+    {
+        foreach ($this->_observers as $observer) {
+            $observer->update($this);
+        }
     }
 }
