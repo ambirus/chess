@@ -5,11 +5,11 @@ class FileStorage extends Storage
 {
     public function save()
     {
-        // TODO: Implement save() method.
+        echo 'Saved in File' . "\n";
     }
 
     public function load()
     {
-        // TODO: Implement load() method.
+        echo 'Loaded from File' . "\n";
     }
 }

@@ -5,11 +5,11 @@ class RedisStorage extends Storage
 {
     public function save()
     {
-        // TODO: Implement save() method.
+        echo 'Saved in Redis' . "\n";
     }
 
     public function load()
     {
-        // TODO: Implement load() method.
+        echo 'Loaded from Redis' . "\n";
     }
 }
