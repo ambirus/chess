@@ -3,12 +3,12 @@ namespace src;
 
 class BoardSaver
 {
-    public static function save(BoardManager $boardManager): bool
+    public function save(BoardManager $boardManager): bool
     {
         return StorageManager::model()->save($boardManager);
     }
 
-    public static function load()
+    public function load()
     {
         return StorageManager::model()->load();
     }

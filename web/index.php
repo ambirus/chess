@@ -4,6 +4,8 @@ ini_set("display_errors", "1");
 require_once '..' . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
 use src\Board;
+use src\observers\FigureObserver;
+use src\observers\KingObserver;
 use src\Coordinate;
 use src\BoardManager;
 use src\BoardSaver;
@@ -14,6 +16,10 @@ use src\figures\Pawn;
 try {
 
     $boardManager = new BoardManager(new Board());
+    $observer1 = new FigureObserver();
+    $boardManager->attach($observer1);
+    $observer2 = new KingObserver();
+    $boardManager->attach($observer2);
 
     $king = $boardManager->addFigure(new King(), new Coordinate(4, 1));
     $queen = $boardManager->addFigure(new Queen(), new Coordinate(5,1));
@@ -23,9 +29,9 @@ try {
 
     $pawn = $boardManager->addFigure(new Pawn(), new Coordinate(5,2));
 
-    BoardSaver::save($boardManager);
+    (new BoardSaver())->save($boardManager);
 
-    $boardManager = BoardSaver::load();
+    $boardManager = (new BoardSaver())->load();
 
 
 } catch (Exception $e) {

@@ -1,12 +1,15 @@
 <?php
 namespace src;
 
+use SplObserver;
 use src\figures\Figure;
 
-class BoardManager
+class BoardManager implements \SplSubject
 {
     private $_board;
     private $_figures = [];
+    private $_observers = [];
+    private $_lastAdded;
 
     public function __construct(Board $board)
     {
@@ -21,6 +24,9 @@ class BoardManager
         ];
 
         $this->_checkAllowedMove($coordinates);
+        $this->_lastAdded = $figure->getName();
+
+        $this->notify();
 
         return $figure;
     }
@@ -50,6 +56,27 @@ class BoardManager
         return $this->_figures;
     }
 
+    public function attach(SplObserver $observer)
+    {
+        $this->_observers[] = $observer;
+    }
+
+    public function detach(SplObserver $observer)
+    {
+        $key = array_search($observer,$this->_observers, true);
+
+        if (false !== $key) {
+            unset($this->_observers[$key]);
+        }
+    }
+
+    public function notify()
+    {
+        foreach ($this->_observers as $value) {
+            $value->update($this);
+        }
+    }
+
     private function _checkAllowedMove(Coordinate $coordinates): void
     {
         if (sizeof($this->_figures) == $this->_board->getSize())
@@ -67,5 +94,10 @@ class BoardManager
 
         }
 
+    }
+
+    public function getLastAdded(): string
+    {
+        return $this->_lastAdded;
     }
 }
