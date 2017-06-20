@@ -1,17 +1,27 @@
 <?php
 namespace src;
 
-use src\storages\Storage;
-
 class StorageManager
 {
-    public static function model($typeStorage = 'file'): Storage
+    private $_instance;
+
+    public function __construct($typeStorage = 'file')
     {
         $className = 'src\\storages\\' . ucfirst($typeStorage) . 'Storage';
 
         if (class_exists($className) === false)
             throw new \Exception('No class for selected storage!: ' . $typeStorage);
 
-        return new $className;
+        $this->_instance = new $className;
+    }
+
+    public function save($data)
+    {
+        return $this->_instance->save($data);
+    }
+
+    public function load()
+    {
+        return $this->_instance->load();
     }
 }

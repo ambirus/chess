@@ -3,13 +3,20 @@ namespace src;
 
 class BoardSaver
 {
+    private $_manager;
+
+    public function __construct()
+    {
+        $this->_manager = new StorageManager();
+    }
+
     public function save(BoardManager $boardManager): bool
     {
-        return StorageManager::model()->save($boardManager);
+        return $this->_manager->save($boardManager);
     }
 
     public function load()
     {
-        return StorageManager::model()->load();
+        return $this->_manager->load();
     }
 }
