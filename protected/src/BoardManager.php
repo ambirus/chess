@@ -1,61 +1,71 @@
 <?php
 namespace src;
 
-use SplObserver;
 use src\figures\Figure;
 
-class BoardManager implements \SplSubject
+class BoardManager
 {
     private $_board;
     private $_figures = [];
-    private $_observers;
 
     public function __construct(Board $board)
     {
         $this->_board = $board;
-        $this->_observers = new \SplObjectStorage();
     }
 
-    public function addFigure(Figure $figure, Coordinate $coordinates)
+    public function addFigure(Figure $figure, Coordinate $coordinates): Figure
     {
-        $placedFigure = [
+        $this->_figures[] = [
             'figure' => $figure,
             'coordinates' => $coordinates
         ];
-        $this->_figures[] = $placedFigure;
-        $this->notify();
 
-        return $placedFigure;
+        $this->_checkAllowedMove($coordinates);
+
+        return $figure;
     }
 
-    public function moveFigure($placedFigure, Coordinate $newCoordinates)
+    public function moveFigure(Figure $figure, Coordinate $newCoordinates)
     {
-        foreach ($this->_figures as $k => $v) {
-            if ($v['figure'] == $placedFigure['figure']) {
+        foreach ($this->_figures as $k => $_figure) {
+            if ($_figure['figure'] == $figure) {
                 $this->_figures[$k]['coordinates'] = $newCoordinates;
+            }
+        }
+
+        $this->_checkAllowedMove($newCoordinates);
+    }
+
+    public function removeFigure(Figure $figure)
+    {
+        foreach ($this->_figures as $k => $_figure) {
+            if ($_figure['figure'] == $figure) {
+                unset($this->_figures[$k]);
             }
         }
     }
 
-    public function getFigures()
+    public function getFigures(): array
     {
         return $this->_figures;
     }
 
-    public function attach(SplObserver $observer)
+    private function _checkAllowedMove(Coordinate $coordinates): void
     {
-        $this->_observers->attach($observer);
-    }
+        if (sizeof($this->_figures) == $this->_board->getSize())
+            throw new \Exception('The board is full already!');
 
-    public function detach(SplObserver $observer)
-    {
-        $this->_observers->detach($observer);
-    }
+        $countExists = 0;
 
-    public function notify()
-    {
-        foreach ($this->_observers as $observer) {
-            $observer->update($this);
+        foreach ($this->_figures as $k => $_figure) {
+
+            if ($_figure['coordinates'] == $coordinates)
+                $countExists++;
+
+            if ($countExists > 1)
+                throw new \Exception('Cell ' . $coordinates->get() . ' is occupied!');
+
         }
+
     }
 }

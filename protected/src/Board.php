@@ -11,8 +11,8 @@ class Board
             $this->_size = $size;
     }
 
-    public function getSize()
+    public function getSize(): int
     {
-        return $this->_size;
+        return pow($this->_size, 2);
     }
 }

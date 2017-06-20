@@ -14,4 +14,9 @@ class Coordinate
         $this->_x = $x;
         $this->_y = $y;
     }
+
+    public function get(): string
+    {
+        return $this->_x . ', ' . $this->_y;
+    }
 }

@@ -6,22 +6,26 @@ require_once '..' . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'b
 use src\Board;
 use src\Coordinate;
 use src\BoardManager;
+use src\BoardSaver;
 use src\figures\King;
 use src\figures\Queen;
+use src\figures\Pawn;
 
 try {
 
-    $observer = new \src\BoardObserver();
     $boardManager = new BoardManager(new Board());
-    $boardManager->attach($observer);
 
     $king = $boardManager->addFigure(new King(), new Coordinate(4, 1));
     $queen = $boardManager->addFigure(new Queen(), new Coordinate(5,1));
-   // print_r($boardManager->getFigures());
-    $boardManager->moveFigure($king, new Coordinate(5, 2));
-   // print_r($boardManager->getFigures());
 
-    print_r($observer->getChanged());
+    $boardManager->moveFigure($king, new Coordinate(5, 5));
+    $boardManager->removeFigure($king);
+
+    $pawn = $boardManager->addFigure(new Pawn(), new Coordinate(5,2));
+
+    BoardSaver::save($boardManager);
+
+    $boardManager = BoardSaver::load();
 
 
 } catch (Exception $e) {
